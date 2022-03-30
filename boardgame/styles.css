@@ -1,0 +1,97 @@
+:root {
+    --light-grey: #e9e9e9;
+    --dark-grey: #414141;
+    --box-grey: #6c757d;
+}
+
+body {
+    background-color: var(--light-grey);
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--dark-grey);
+    touch-action: manipulation;
+}
+
+.header {
+    margin: auto;
+    text-align: center;
+    padding: 10px;
+}
+
+.header hr {
+    width: 15rem;
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.header h1 {
+    font-weight: initial;
+    color: var(--dark-grey);
+}
+
+#statsBtn {
+    cursor: pointer;
+    background: url(stats.png) no-repeat;
+    height: 30px;
+    width: 30px;
+    background-size: contain;
+    border: 0;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.row {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin-right: -15px;
+    margin-left: -15px;
+}
+
+.box {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    margin-right: 1rem;
+    margin-bottom: 0.5em;
+    border-radius: 0.2em;
+    color: black;
+}
+
+.btn {
+    background-color: transparent;
+    border: 1px solid transparent;
+}
+
+.btn-outline-secondary {
+    border-color: var(--box-grey);
+}
+
+.btn-outline-secondary:hover {
+    color: #fff;
+    background-color: var(--box-grey);
+    border-color: var(--box-grey);
+}
+
+.d-flex {
+    display: flex;
+}
+
+#keyboard {
+    padding-left: 50%;
+    padding-right: 50%;
+    justify-content: center;
+    display: flex;
+}
+
+.box2 {
+    width: 30%;
+    height: 30%;
+    padding: 2em;
+    border: 1px solid black;
+    border-radius: 0.5em;
+    margin: 0.3em;
+    cursor: pointer;
+}
