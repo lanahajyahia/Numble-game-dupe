@@ -78,34 +78,34 @@ function createCalculator() {
     for (let i = 0; i < 4; i++) {
         var containerDiv = document.createElement("div");
         containerDiv.setAttribute("class", "col-sm-12  d-flex justify-content-center");
+
         document.getElementById("keyboard").children[0].appendChild(containerDiv);
         if (i == 3) {
             const boxBtn = document.createElement("button");
             boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
-
+            boxBtn.setAttribute("id", "b_enter");
+            boxBtn.innerText = 'Enter';
             document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
-        }
-        // var innerDiv = document.createElement("div");
-        // document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(innerDiv);
+        } else {
+            for (let j = 0; j < 5; j++) {
+                const boxBtn = document.createElement("button");
+                boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
+                strBtn = count;
+                if (count == 10) {
+                    count = 0;
+                    strBtn = 0;
+                    boxBtn.setAttribute("id", "b_" + strBtn);
 
-        for (let j = 0; j < 5; j++) {
-            const boxBtn = document.createElement("button");
-            boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
-            strBtn = count;
-            if (count == 10) {
-                count = 0;
-                strBtn = 0;
-                boxBtn.setAttribute("id", "b_" + strBtn);
+                } else if (count == 0) {
+                    boxBtn.setAttribute("id", "b_" + calcStrArr[j]);
+                    strBtn = calcArr[j];
 
-            } else if (count == 0) {
-                boxBtn.setAttribute("id", "b_" + calcStrArr[j]);
-                strBtn = calcArr[j];
-
-            } else {
-                boxBtn.setAttribute("id", "b_" + count++);
+                } else {
+                    boxBtn.setAttribute("id", "b_" + count++);
+                }
+                boxBtn.innerText = strBtn;
+                document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
             }
-            boxBtn.innerText = strBtn;
-            document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
         }
     }
     // create enter button
