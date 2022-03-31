@@ -3,13 +3,14 @@ var dmas_array = ['+', '-', '*', '/'];
 // console.log(Math.floor(Math.random() * 4));
 var myStringEquation = "";
 var myArrayEquation = [];
+var guess_count = 0;
 
 function generateEquation() {
     for (let i = 0; i < 7; i++) {
         if (i % 2 == 0) {
             var randomNum = Math.floor(Math.random() * 10);
             myStringEquation += randomNum;
-            console.log("before 1 " + eval(myStringEquation));
+            // console.log("before 1 " + eval(myStringEquation));
             //  myArrayEquation[i] = randomNum;
             if (myArrayEquation[i - 1] == '/') {
                 try {
@@ -122,10 +123,18 @@ function createCalculator() {
 createBoxes();
 createCalculator();
 
+
+var divParent = null;
+
 function addNumber(boxElm) {
-    for (let j = 0; j < 7; j++) {
-        var box = document.getElementsByClassName('box')[j];
-        if (box.innerHTML == null || box.innerHTML == undefined || box.innerHTML.trim() == '') {
+    var parent = document.getElementsByClassName('row mt-2')[guess_count];
+    var children = parent.children;
+    // divParent = document.getElementsByClassName('row mt-2')[guess_count];
+    // console.log(divParent);
+    for (let j = 0; j < children.length; j++) {
+        var box = children[j];
+        // var box = parentDiv;
+        if (box.innerHTML == '') {
             box.innerHTML = boxElm;
             break;
         }
@@ -133,7 +142,7 @@ function addNumber(boxElm) {
     }
 }
 
-function remove() {
+function remove(guess_count) {
     for (let j = 0; j < 7; j++) {
         var box = document.getElementsByClassName('box')[j];
 
@@ -156,58 +165,55 @@ function remove() {
 }
 
 function checkResult() {
-    var result = '';
+
+    var myEquation = '';
     var myTemp = '';
     var countWin = 0;
     for (let j = 0; j < 7; j++) {
         var box = document.getElementsByClassName('box')[j];
-        result += box.innerHTML;
+        myEquation += box.innerHTML;
 
     }
     console.log("my string ", myStringEquation);
-    console.log("res ", result);
+    console.log("myEquation ", myEquation);
     try {
-
         myTemp = myStringEquation.trim();
-        console.log("my temp before ", myTemp);
-        if (eval(result) == eval(myTemp)) {
-            console.log("equal!!!!!!!");
-            // check places of numbers
-            for (let i = 0; i < result.length; i++) {
+        if (eval(myEquation) == eval(myStringEquation)) {
+            guess_count += 1;
+            for (let i = 0; i < myTemp.length; i++) {
                 var box = document.getElementsByClassName('box')[i];
-                if (myTemp.indexOf(result[i]) == -1) {
-                    box.style.background = 'black';
-                } else
-                if (result[i] == myTemp[i]) {
+                if (myTemp[i] == myEquation[i]) {
                     myTemp = myTemp.replace(myTemp[i], "x");
+                    myEquation = myEquation.replace(myEquation[i], "x");
                     box.style.background = 'green';
                     countWin++;
+                    console.log("my temp ", myTemp);
+                    console.log("myEquation ", myEquation);
+                    console.log("----------");
 
-                } else {
-                    box.style.background = 'orange';
                 }
                 box.style.color = 'white';
             }
-            console.log("my temp ", myTemp);
-            // if (countWin == 7) {
-            //     return "win";
-            // } else {
+            if (countWin == 7) {
+                return "win";
+            } else {
+                for (let i = 0; i < myTemp.length; i++) {
+                    var box = document.getElementsByClassName('box')[i];
+                    if (myTemp[i] != myEquation[i] && myTemp.indexOf(myEquation[i]) != -1) {
+                        myTemp = myTemp.replace(myTemp.indexOf(myEquation[i]), "y");
+                        myEquation = myEquation.replace(myEquation[i], "y");
+                        box.style.background = 'orange';
+                        console.log("my temp ", myTemp);
+                        console.log("myEquation ", myEquation);
+                        console.log("----------");
 
-            //     for (let i = 0; i < result.length; i++) {
-            //         var box = document.getElementsByClassName('box')[i];
-            //         if (result[i] != myTemp[i] && myTemp.indexOf(result[i]) != -1) {
-            //             box.style.background = 'orange';
-            //         } else if (box.style.background != 'green') {
-            //             box.style.background = 'black';
-            //         }
-            //         box.style.color = 'white';
-            //     }
-            //     return "next";
+                    } else if (box.style.background != 'green') {
+                        box.style.background = 'black';
+                    }
+                }
 
-            // }
-
-        } else {
-            // show red
+                // return "next";
+            }
         }
     } catch (err) {
         // show red
@@ -261,14 +267,4 @@ var b_delete = document.getElementById("b_delete");
 b_delete.onclick = function() { remove() };
 
 var b_enter = document.getElementById("b_enter");
-b_enter.onclick = function() { console.log(checkResult()) };
-// elm.onclick = function() { console.log("hi") };
-
-
-// elm.onclick = function() { console.log("hi") };
-// var mainDiv = document.getElementById('a_0');
-// var secondBtn = mainDiv.children[1];
-
-// var randomNum = Math.floor(Math.random() * 10);
-// secondBtn.textContent = randomNum;
-// console.log("ready!");
+b_enter.onclick = function() { checkResult() };
