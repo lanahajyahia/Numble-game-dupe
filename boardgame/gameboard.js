@@ -1,7 +1,6 @@
 // import { generateEquation } from './module.js';
 var dmas_array = ['+', '-', '*', '/'];
 // console.log(Math.floor(Math.random() * 4));
-
 var myStringEquation = "";
 var myArrayEquation = [];
 
@@ -13,10 +12,18 @@ function generateEquation() {
             console.log("before 1 " + eval(myStringEquation));
             //  myArrayEquation[i] = randomNum;
             if (myArrayEquation[i - 1] == '/') {
-                while (!isInt(eval(myStringEquation))) {
-                    myStringEquation = myStringEquation.replace(randomNum, "");
-                    randomNum = Math.floor(Math.random() * 10);
-                    myStringEquation += randomNum;
+                try {
+
+
+                    while (!isInt(eval(myStringEquation))) {
+                        myStringEquation = myStringEquation.replace(randomNum, "");
+                        randomNum = Math.floor(Math.random() * 10);
+                        myStringEquation += randomNum;
+
+                    }
+                } catch (err) {
+                    console.log(err.message);
+                    location.reload();
 
                 }
             }
@@ -29,6 +36,7 @@ function generateEquation() {
 
         }
     }
+    console.log(myStringEquation);
     return eval(myStringEquation);
 }
 
@@ -117,8 +125,6 @@ createCalculator();
 function addNumber(boxElm) {
     for (let j = 0; j < 7; j++) {
         var box = document.getElementsByClassName('box')[j];
-        // console.log('box elm ' + boxElm);
-        // console.log('box elm ' + box.innerHTML);
         if (box.innerHTML == null || box.innerHTML == undefined || box.innerHTML.trim() == '') {
             box.innerHTML = boxElm;
             break;
@@ -130,7 +136,6 @@ function addNumber(boxElm) {
 function remove() {
     for (let j = 0; j < 7; j++) {
         var box = document.getElementsByClassName('box')[j];
-        // console.log('box elm ' + boxElm);
 
         if (box.innerHTML == null || box.innerHTML == undefined || box.innerHTML.trim() == '') {
             if (j - 1 > -1) {
@@ -147,6 +152,66 @@ function remove() {
             }
         }
 
+    }
+}
+
+function checkResult() {
+    var result = '';
+    var myTemp = '';
+    var countWin = 0;
+    for (let j = 0; j < 7; j++) {
+        var box = document.getElementsByClassName('box')[j];
+        result += box.innerHTML;
+
+    }
+    console.log("my string ", myStringEquation);
+    console.log("res ", result);
+    try {
+
+        myTemp = myStringEquation.trim();
+        console.log("my temp before ", myTemp);
+        if (eval(result) == eval(myTemp)) {
+            console.log("equal!!!!!!!");
+            // check places of numbers
+            for (let i = 0; i < result.length; i++) {
+                var box = document.getElementsByClassName('box')[i];
+                if (myTemp.indexOf(result[i]) == -1) {
+                    box.style.background = 'black';
+                } else
+                if (result[i] == myTemp[i]) {
+                    myTemp = myTemp.replace(myTemp[i], "x");
+                    box.style.background = 'green';
+                    countWin++;
+
+                } else {
+                    box.style.background = 'orange';
+                }
+                box.style.color = 'white';
+            }
+            console.log("my temp ", myTemp);
+            // if (countWin == 7) {
+            //     return "win";
+            // } else {
+
+            //     for (let i = 0; i < result.length; i++) {
+            //         var box = document.getElementsByClassName('box')[i];
+            //         if (result[i] != myTemp[i] && myTemp.indexOf(result[i]) != -1) {
+            //             box.style.background = 'orange';
+            //         } else if (box.style.background != 'green') {
+            //             box.style.background = 'black';
+            //         }
+            //         box.style.color = 'white';
+            //     }
+            //     return "next";
+
+            // }
+
+        } else {
+            // show red
+        }
+    } catch (err) {
+        // show red
+        console.log("error " + err.message);
     }
 }
 
@@ -195,6 +260,8 @@ b_divide.onclick = function() { addNumber(b_divide.innerHTML) };
 var b_delete = document.getElementById("b_delete");
 b_delete.onclick = function() { remove() };
 
+var b_enter = document.getElementById("b_enter");
+b_enter.onclick = function() { console.log(checkResult()) };
 // elm.onclick = function() { console.log("hi") };
 
 
