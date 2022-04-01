@@ -151,3 +151,24 @@ body {
         transform: translate(1px, -2px) rotate(-1deg);
     }
 }
+
+
+/* IFRAME STYLE */
+
+#statsIframe {
+    position: fixed;
+    margin: 0 auto;
+    width: 400px;
+    height: 300px;
+    border: 2px solid red;
+    text-align: center;
+    background-color: white;
+    /* z-index: 99999; */
+}
+
+.iframe-container {
+    height: fit-content;
+    text-align: center;
+    width: 100%;
+    display: none;
+}

@@ -291,3 +291,17 @@ b_delete.onclick = function() { remove() };
 
 var b_enter = document.getElementById("b_enter");
 b_enter.onclick = function() { checkResult() };
+
+function displayIframe() {
+    $('.iframe-container').toggle();
+    $('#statsIframe').contents().find('button#closeIframe').click(function() {
+        $('.iframe-container').toggle();
+    });
+}
+
+$("body").mousedown(function() {
+    if ($('.iframe-container').css('display') == 'block') {
+        $('.iframe-container').css('display', 'none');
+    }
+
+});
