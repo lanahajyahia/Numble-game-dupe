@@ -2,6 +2,7 @@ var dmas_array = ['+', '-', '*', '/'];
 var myStringEquation = "";
 var myArrayEquation = [];
 var guess_count = 0;
+$("#a_" + guess_count).css("display", "block");
 
 function generateEquation() {
     for (let i = 0; i < 7; i++) {
@@ -15,7 +16,7 @@ function generateEquation() {
                     while (!isInt(eval(myStringEquation))) {
                         myStringEquation = myStringEquation.replace(randomNum, "");
                         randomNum = Math.floor(Math.random() * 10);
-                        myStringEquation += randomNum;
+                        myStringEquation += randomNum + '';
 
                     }
                 } catch (err) {
@@ -24,7 +25,7 @@ function generateEquation() {
 
                 }
             }
-            myArrayEquation[i] = randomNum;
+            myArrayEquation[i] = randomNum + '';
         } else {
             let index_random = Math.floor(Math.random() * 4);
 
@@ -158,58 +159,93 @@ function remove() {
 
 function checkResult() {
 
-    var myEq = '';
-    var mainEq = '';
-    var countWin = 0;
+    let myEqArr = [],
+        orgEqArr = [];
+    let myEq = '';
+    let isWinCount = 0;
 
     let parent = document.getElementsByClassName('row mt-2')[guess_count];
     let children = parent.children;
+
+
+
+
     for (let j = 0; j < children.length - 1; j++) {
+        myEqArr[j] = children[j].innerHTML;
         myEq += children[j].innerHTML;
+
     }
 
-    console.log("my string ", myStringEquation);
-    console.log("myEquation ", myEq);
     try {
-        mainEq = myStringEquation.trim();
         if (eval(myEq) == eval(myStringEquation)) {
-
-            for (let i = 0; i < mainEq.length; i++) {
-                if (mainEq[i] == myEq[i]) {
-                    mainEq = mainEq.replace(mainEq[i], "x");
-                    myEq = myEq.replace(myEq[i], "x");
+            orgEqArr = Array.from(myArrayEquation);
+            console.log("original " + myArrayEquation);
+            console.log("org array " + orgEqArr);
+            for (let i = 0; i < myEqArr.length; i++) {
+                console.log(myEqArr[i] + " " + orgEqArr[i]);
+                if (myEqArr[i] == orgEqArr[i]) {
+                    myEqArr[i] = 'x';
+                    orgEqArr[i] = 'x';
                     children[i].style.background = 'green';
-                    countWin++;
-
+                    isWinCount++;
                 }
-                box.style.color = 'white';
+                children[i].style.color = 'white';
             }
-            if (countWin == 7) {
-                return guess_count;
-
+            console.log("mine " + myEqArr.toString());
+            console.log("org " + orgEqArr.toString());
+            console.log("------")
+            if (isWinCount == 7) {
+                return "win";
             } else {
-                for (let i = 0; i < mainEq.length; i++) {
-                    if (mainEq[i] != myEq[i] && mainEq.indexOf(myEq[i]) != -1) {
-                        mainEq = mainEq.replace(mainEq.indexOf(myEq[i]), "y");
-                        myEq = myEq.replace(myEq[i], "y");
-                        children[i].style.background = 'orange';
-                        console.log("my temp ", mainEq);
-                        console.log("myEquation ", myEq);
-                        console.log("----------");
+                for (let i = 0; i < myEqArr.length; i++) {
+                    if (myEqArr[i] != 'x') {
+                        console.log("not x " + myEqArr[i]);
+                        console.log("org check" + orgEqArr.toString())
+                        console.log("index " + orgEqArr.indexOf(myEqArr[i]));
+                        if (orgEqArr.indexOf(myEqArr[i]) != -1) {
+                            // console.log("index " + orgEqArr.indexOf(myEqArr[i]));
+                            orgEqArr[orgEqArr.indexOf(myEqArr[i])] = 'y';
+                            myEqArr[i] = 'y';
+                            children[i].style.background = 'orange';
+                            console.log("mine " + myEqArr.toString());
+                            console.log("org " + orgEqArr.toString())
 
-                    } else if (children[i].style.background != 'green') {
-                        children[i].style.background = 'black';
+                        } else {
+                            children[i].style.background = 'black';
+                        }
+
                     }
+                    children[i].style.color = 'white';
                 }
-
+                $("#a_" + guess_count).css("display", "none");
                 guess_count += 1;
+                $("#a_" + guess_count).css("display", "block");
+
                 return "next";
             }
+        } else {
+            //show error red 
+            warningErrorEquation();
+
         }
     } catch (err) {
-        // show red
+        //show error red
+        // warningErrorEquation();
         console.log("error " + err.message);
     }
+}
+
+function warningErrorEquation() {
+    console.log("hi");
+    // get last child of equation
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+
+    let el = children[children.length - 1].children[0];
+    var original = 'black';
+    el.style.color = 'red';
+    window.setTimeout(function() { el.style.color = original; }, 1500);
+
 }
 
 var b1 = document.getElementById("b_1");
