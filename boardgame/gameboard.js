@@ -79,7 +79,7 @@ function createBoxes() {
 function createCalculator() {
     var count = 1;
     var calcStrArr = ['plus', 'minus', 'div', 'multiple', 'delete'];
-    var calcArr = ['+', '-', '/', '*', 'x'];
+    var calcArr = ['+', '-', '/', '*', ''];
     var strBtn = '';
     for (let i = 0; i < 4; i++) {
         var containerDiv = document.createElement("div");
@@ -166,23 +166,16 @@ function checkResult() {
 
     let parent = document.getElementsByClassName('row mt-2')[guess_count];
     let children = parent.children;
-
-
-
-
     for (let j = 0; j < children.length - 1; j++) {
         myEqArr[j] = children[j].innerHTML;
         myEq += children[j].innerHTML;
-
     }
+    console.log(myEqArr);
 
     try {
         if (eval(myEq) == eval(myStringEquation)) {
             orgEqArr = Array.from(myArrayEquation);
-            console.log("original " + myArrayEquation);
-            console.log("org array " + orgEqArr);
             for (let i = 0; i < myEqArr.length; i++) {
-                console.log(myEqArr[i] + " " + orgEqArr[i]);
                 if (myEqArr[i] == orgEqArr[i]) {
                     myEqArr[i] = 'x';
                     orgEqArr[i] = 'x';
@@ -191,25 +184,16 @@ function checkResult() {
                 }
                 children[i].style.color = 'white';
             }
-            console.log("mine " + myEqArr.toString());
-            console.log("org " + orgEqArr.toString());
-            console.log("------")
             if (isWinCount == 7) {
                 return "win";
             } else {
                 for (let i = 0; i < myEqArr.length; i++) {
                     if (myEqArr[i] != 'x') {
-                        console.log("not x " + myEqArr[i]);
-                        console.log("org check" + orgEqArr.toString())
-                        console.log("index " + orgEqArr.indexOf(myEqArr[i]));
                         if (orgEqArr.indexOf(myEqArr[i]) != -1) {
                             // console.log("index " + orgEqArr.indexOf(myEqArr[i]));
                             orgEqArr[orgEqArr.indexOf(myEqArr[i])] = 'y';
                             myEqArr[i] = 'y';
                             children[i].style.background = 'orange';
-                            console.log("mine " + myEqArr.toString());
-                            console.log("org " + orgEqArr.toString())
-
                         } else {
                             children[i].style.background = 'black';
                         }
@@ -224,7 +208,15 @@ function checkResult() {
                 return "next";
             }
         } else {
-            //show error red 
+            for (let j = 0; j < children.length - 1; j++) {
+                if (children[j].innerHTML != "" && children[j].innerHTML != undefined)
+                    children[j].classList.add('shake');
+
+                window.setTimeout(function() {
+
+                    children[j].classList.remove('shake');
+                }, 500);
+            }
             warningErrorEquation();
 
         }
@@ -233,6 +225,10 @@ function checkResult() {
         // warningErrorEquation();
         console.log("error " + err.message);
     }
+}
+
+function shakeBoxes() {
+
 }
 
 function warningErrorEquation() {
