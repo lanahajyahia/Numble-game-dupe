@@ -1,6 +1,4 @@
-// import { generateEquation } from './module.js';
 var dmas_array = ['+', '-', '*', '/'];
-// console.log(Math.floor(Math.random() * 4));
 var myStringEquation = "";
 var myArrayEquation = [];
 var guess_count = 0;
@@ -10,8 +8,6 @@ function generateEquation() {
         if (i % 2 == 0) {
             var randomNum = Math.floor(Math.random() * 10);
             myStringEquation += randomNum;
-            // console.log("before 1 " + eval(myStringEquation));
-            //  myArrayEquation[i] = randomNum;
             if (myArrayEquation[i - 1] == '/') {
                 try {
 
@@ -83,7 +79,7 @@ function createCalculator() {
     var count = 1;
     var calcStrArr = ['plus', 'minus', 'div', 'multiple', 'delete'];
     var calcArr = ['+', '-', '/', '*', 'x'];
-    var strBtn;
+    var strBtn = '';
     for (let i = 0; i < 4; i++) {
         var containerDiv = document.createElement("div");
         containerDiv.setAttribute("class", "col-sm-12  d-flex justify-content-center");
@@ -117,23 +113,15 @@ function createCalculator() {
             }
         }
     }
-    // create enter button
-
 }
 createBoxes();
 createCalculator();
 
-
-var divParent = null;
-
 function addNumber(boxElm) {
-    var parent = document.getElementsByClassName('row mt-2')[guess_count];
-    var children = parent.children;
-    // divParent = document.getElementsByClassName('row mt-2')[guess_count];
-    // console.log(divParent);
-    for (let j = 0; j < children.length; j++) {
-        var box = children[j];
-        // var box = parentDiv;
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+    for (let j = 0; j < children.length - 1; j++) {
+        let box = children[j];
         if (box.innerHTML == '') {
             box.innerHTML = boxElm;
             break;
@@ -142,77 +130,80 @@ function addNumber(boxElm) {
     }
 }
 
-function remove(guess_count) {
-    for (let j = 0; j < 7; j++) {
-        var box = document.getElementsByClassName('box')[j];
+function remove() {
 
-        if (box.innerHTML == null || box.innerHTML == undefined || box.innerHTML.trim() == '') {
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+
+    for (let j = 0; j < children.length - 1; j++) {
+        let box = children[j];
+        if (box.innerHTML == '') {
             if (j - 1 > -1) {
                 console.log('box not 6 ' + box.innerHTML);
-                document.getElementsByClassName('box')[j - 1].innerHTML = '';
+                children[j - 1].innerHTML = '';
                 break;
             }
-
         } else {
-            if (j == 6 && box.innerHTML != undefined) {
+            if (j == 6 && box.innerHTML != '') {
                 console.log('box 6 ' + box.innerHTML);
                 box.innerHTML = '';
                 break;
             }
         }
 
+
+
     }
 }
 
 function checkResult() {
 
-    var myEquation = '';
-    var myTemp = '';
+    var myEq = '';
+    var mainEq = '';
     var countWin = 0;
-    for (let j = 0; j < 7; j++) {
-        var box = document.getElementsByClassName('box')[j];
-        myEquation += box.innerHTML;
 
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+    for (let j = 0; j < children.length - 1; j++) {
+        myEq += children[j].innerHTML;
     }
+
     console.log("my string ", myStringEquation);
-    console.log("myEquation ", myEquation);
+    console.log("myEquation ", myEq);
     try {
-        myTemp = myStringEquation.trim();
-        if (eval(myEquation) == eval(myStringEquation)) {
-            guess_count += 1;
-            for (let i = 0; i < myTemp.length; i++) {
-                var box = document.getElementsByClassName('box')[i];
-                if (myTemp[i] == myEquation[i]) {
-                    myTemp = myTemp.replace(myTemp[i], "x");
-                    myEquation = myEquation.replace(myEquation[i], "x");
-                    box.style.background = 'green';
+        mainEq = myStringEquation.trim();
+        if (eval(myEq) == eval(myStringEquation)) {
+
+            for (let i = 0; i < mainEq.length; i++) {
+                if (mainEq[i] == myEq[i]) {
+                    mainEq = mainEq.replace(mainEq[i], "x");
+                    myEq = myEq.replace(myEq[i], "x");
+                    children[i].style.background = 'green';
                     countWin++;
-                    console.log("my temp ", myTemp);
-                    console.log("myEquation ", myEquation);
-                    console.log("----------");
 
                 }
                 box.style.color = 'white';
             }
             if (countWin == 7) {
-                return "win";
+                return guess_count;
+
             } else {
-                for (let i = 0; i < myTemp.length; i++) {
-                    var box = document.getElementsByClassName('box')[i];
-                    if (myTemp[i] != myEquation[i] && myTemp.indexOf(myEquation[i]) != -1) {
-                        myTemp = myTemp.replace(myTemp.indexOf(myEquation[i]), "y");
-                        myEquation = myEquation.replace(myEquation[i], "y");
-                        box.style.background = 'orange';
-                        console.log("my temp ", myTemp);
-                        console.log("myEquation ", myEquation);
+                for (let i = 0; i < mainEq.length; i++) {
+                    if (mainEq[i] != myEq[i] && mainEq.indexOf(myEq[i]) != -1) {
+                        mainEq = mainEq.replace(mainEq.indexOf(myEq[i]), "y");
+                        myEq = myEq.replace(myEq[i], "y");
+                        children[i].style.background = 'orange';
+                        console.log("my temp ", mainEq);
+                        console.log("myEquation ", myEq);
                         console.log("----------");
 
-                    } else if (box.style.background != 'green') {
-                        box.style.background = 'black';
+                    } else if (children[i].style.background != 'green') {
+                        children[i].style.background = 'black';
                     }
                 }
 
-                // return "next";
+                guess_count += 1;
+                return "next";
             }
         }
     } catch (err) {
