@@ -23,6 +23,6 @@ function generateEquation(myArrayEquation, dmas_array) {
             myArrayEquation[i] = dmas_array[index_random];
         }
     }
-    console.log(eval(myArrayEquation));
+    console.log("from generate ", eval(myArrayEquation));
     return eval(myArrayEquation.join(''));
 }

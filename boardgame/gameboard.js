@@ -1,17 +1,16 @@
+var guess_count = 0;
+var dmas_array = ['+', '-', '*', '/'];
+var myArrayEquation = [];
+var randNum = generateEquation(myArrayEquation, dmas_array);
+
+var played = 0;
+var win = 0;
+var winPer = 0;
+
 window.onload = function() {
 
-    var dmas_array = ['+', '-', '*', '/'];
-    var myArrayEquation = [];
-
-
-    // var myStringEquation = '';
-    var randNum = generateEquation(myArrayEquation, dmas_array);
-    var guess_count = 0;
-    var played = 0;
-    var win = 0;
-    var winPer = 0;
     $("#a_" + guess_count).css("display", "block");
-    createBoxes();
+    createBoxes(randNum);
     createCalculator();
 
     $("body").mousedown(function() {
@@ -20,7 +19,69 @@ window.onload = function() {
         }
 
     });
+    $("body").keypress(function() {
+        // event.preventDefault();
 
+        switch (event.keyCode) {
+            case 57:
+                addNumber(event.key);
+                break;
+            case 56:
+                addNumber(event.key);
+                break;
+            case 55:
+                addNumber(event.key);
+                break;
+            case 54:
+                addNumber(event.key);
+                break;
+            case 53:
+                addNumber(event.key);
+                break;
+            case 52:
+                addNumber(event.key);
+                break;
+            case 51:
+                addNumber(event.key);
+                break;
+            case 50:
+                addNumber(event.key);
+                break;
+            case 49:
+                addNumber(event.key);
+                break;
+            case 48:
+                addNumber(event.key);
+                break;
+            case 45:
+                addNumber(event.key);
+                break;
+            case 42:
+                addNumber(event.key);
+                break;
+            case 47:
+                addNumber(event.key);
+                break;
+            case 43:
+                addNumber(event.key);
+                break;
+            case 13:
+                checkResult();
+                break;
+            case 8:
+            case 46:
+                console.log('hi');
+                remove();
+                event.preventDefault();
+                break;
+            default:
+
+                break;
+
+
+        }
+
+    });
     var b1 = document.getElementById("b_1");
     b1.onclick = function() { addNumber(b1.innerHTML) };
 
@@ -68,298 +129,223 @@ window.onload = function() {
 
     var b_enter = document.getElementById("b_enter");
     b_enter.onclick = function() { checkResult() };
+}
 
-    // function generateEquation(myStringEquation, myArrayEquation) {
-    //     for (let i = 0; i < 7; i++) {
-    //         if (i % 2 == 0) {
-    //             var randomNum = Math.floor(Math.random() * 10);
-    //             myStringEquation += randomNum;
-    //             if (myArrayEquation[i - 1] == '/') {
-    //                 try {
+function createBoxes(randNum) {
+    // var randNum = generateEquation(myStringEquation, myArrayEquation, dmas_array);
+    for (let i = 0; i < 6; i++) {
+        const rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", "row mt-2");
 
+        document.getElementsByClassName("boxes")[0].appendChild(rowDiv);
+        for (let j = 0; j < 7; j++) {
 
-    //                     while (!isInt(eval(myStringEquation))) {
-    //                         myStringEquation = myStringEquation.replace(randomNum, "");
-    //                         randomNum = Math.floor(Math.random() * 10);
-    //                         myStringEquation += randomNum + '';
-
-    //                     }
-    //                 } catch (err) {
-    //                     console.log(err.message);
-    //                     location.reload();
-
-    //                 }
-    //             }
-    //             myArrayEquation[i] = randomNum + '';
-    //         } else {
-    //             let index_random = Math.floor(Math.random() * 4);
-
-    //             myStringEquation += dmas_array[index_random];
-    //             myArrayEquation[i] = dmas_array[index_random];
-
-    //         }
-    //     }
-    //     // console.log(myStringEquation);
-    //     return eval(myStringEquation);
-    // }
+            const boxBtn = document.createElement("button");
+            boxBtn.setAttribute("class", "box btn btn-outline-secondary");
+            document.getElementsByClassName("row")[i].appendChild(boxBtn);
 
 
+        }
+        const resultDiv = document.createElement("div");
+        resultDiv.setAttribute("id", "a_" + i);
 
-    // function isInt(n) {
-    //     return n % 1 === 0;
-    // }
+        document.getElementsByClassName("row")[i].appendChild(resultDiv);
 
-    function createBoxes() {
-        // var randNum = generateEquation(myStringEquation, myArrayEquation, dmas_array);
-        for (let i = 0; i < 6; i++) {
-            const rowDiv = document.createElement("div");
-            rowDiv.setAttribute("class", "row mt-2");
+        for (let j = 0; j < 2; j++) {
 
-            document.getElementsByClassName("boxes")[0].appendChild(rowDiv);
-            for (let j = 0; j < 7; j++) {
-
-                const boxBtn = document.createElement("button");
-                boxBtn.setAttribute("class", "box btn btn-outline-secondary");
-                document.getElementsByClassName("row")[i].appendChild(boxBtn);
-
-
+            const resultBoxBtn = document.createElement("button");
+            resultBoxBtn.setAttribute("class", "box btn");
+            if (j == 0) {
+                resultBoxBtn.innerText = "=";
+            } else {
+                resultBoxBtn.innerText = randNum;
             }
-            const resultDiv = document.createElement("div");
-            resultDiv.setAttribute("id", "a_" + i);
-
-            document.getElementsByClassName("row")[i].appendChild(resultDiv);
-
-            for (let j = 0; j < 2; j++) {
-
-                const resultBoxBtn = document.createElement("button");
-                resultBoxBtn.setAttribute("class", "box btn");
-                if (j == 0) {
-                    resultBoxBtn.innerText = "=";
-                } else {
-                    resultBoxBtn.innerText = randNum;
-                }
-                document.getElementById(resultDiv.getAttribute('id')).appendChild(resultBoxBtn);
-            }
+            document.getElementById(resultDiv.getAttribute('id')).appendChild(resultBoxBtn);
         }
     }
+}
 
-    function createCalculator() {
-        var count = 1;
-        var calcStrArr = ['plus', 'minus', 'div', 'multiple', 'delete'];
-        var calcArr = ['+', '-', '/', '*', ''];
-        var strBtn = '';
-        for (let i = 0; i < 4; i++) {
-            var containerDiv = document.createElement("div");
-            containerDiv.setAttribute("class", "col-sm-12  d-flex justify-content-center");
+function createCalculator() {
+    var count = 1;
+    var calcStrArr = ['plus', 'minus', 'div', 'multiple', 'delete'];
+    var calcArr = ['+', '-', '/', '*', ''];
+    var strBtn = '';
+    for (let i = 0; i < 4; i++) {
+        var containerDiv = document.createElement("div");
+        containerDiv.setAttribute("class", "col-sm-12  d-flex justify-content-center");
 
-            document.getElementById("keyboard").children[0].appendChild(containerDiv);
-            if (i == 3) {
+        document.getElementById("keyboard").children[0].appendChild(containerDiv);
+        if (i == 3) {
+            const boxBtn = document.createElement("button");
+            boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
+            boxBtn.setAttribute("id", "b_enter");
+            boxBtn.innerText = 'Enter';
+            document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
+        } else {
+            for (let j = 0; j < 5; j++) {
                 const boxBtn = document.createElement("button");
                 boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
-                boxBtn.setAttribute("id", "b_enter");
-                boxBtn.innerText = 'Enter';
-                document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
-            } else {
-                for (let j = 0; j < 5; j++) {
-                    const boxBtn = document.createElement("button");
-                    boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
-                    strBtn = count;
-                    if (count == 10) {
-                        count = 0;
-                        strBtn = 0;
-                        boxBtn.setAttribute("id", "b_" + strBtn);
+                strBtn = count;
+                if (count == 10) {
+                    count = 0;
+                    strBtn = 0;
+                    boxBtn.setAttribute("id", "b_" + strBtn);
 
-                    } else if (count == 0) {
-                        boxBtn.setAttribute("id", "b_" + calcStrArr[j]);
-                        strBtn = calcArr[j];
+                } else if (count == 0) {
+                    boxBtn.setAttribute("id", "b_" + calcStrArr[j]);
+                    strBtn = calcArr[j];
 
-                    } else {
-                        boxBtn.setAttribute("id", "b_" + count++);
-                    }
-                    boxBtn.innerText = strBtn;
-                    document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
+                } else {
+                    boxBtn.setAttribute("id", "b_" + count++);
                 }
+                boxBtn.innerText = strBtn;
+                document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
             }
         }
     }
+}
 
 
-    function addNumber(boxElm) {
-        let parent = document.getElementsByClassName('row mt-2')[guess_count];
-        let children = parent.children;
-        for (let j = 0; j < children.length - 1; j++) {
-            let box = children[j];
-            if (box.innerHTML == '') {
-                box.innerHTML = boxElm;
+function addNumber(boxElm) {
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+    for (let j = 0; j < children.length - 1; j++) {
+        let box = children[j];
+        if (box.innerHTML == '') {
+            box.innerHTML = boxElm;
+            break;
+        }
+
+    }
+}
+
+function remove() {
+
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+
+    for (let j = 0; j < children.length - 1; j++) {
+        let box = children[j];
+        if (box.innerHTML == '') {
+            if (j - 1 > -1) {
+                children[j - 1].innerHTML = '';
                 break;
             }
-
-        }
-    }
-
-    function remove() {
-
-        let parent = document.getElementsByClassName('row mt-2')[guess_count];
-        let children = parent.children;
-
-        for (let j = 0; j < children.length - 1; j++) {
-            let box = children[j];
-            if (box.innerHTML == '') {
-                if (j - 1 > -1) {
-                    children[j - 1].innerHTML = '';
-                    break;
-                }
-            } else {
-                if (j == 6 && box.innerHTML != '') {
-                    box.innerHTML = '';
-                    break;
-                }
+        } else {
+            if (j == 6 && box.innerHTML != '') {
+                box.innerHTML = '';
+                break;
             }
         }
     }
+}
 
-    function checkResult() {
+function checkResult() {
 
-        let myEqArr = [],
-            orgEqArr = [];
-        //let myEq = '';
-        let isWinCount = 0;
+    let myEqArr = [],
+        orgEqArr = [];
+    let isWinCount = 0;
 
-        let sessionArray = [];
-
-        let parent = document.getElementsByClassName('row mt-2')[guess_count];
-        let children = parent.children;
-        for (let j = 0; j < children.length - 1; j++) {
-            myEqArr[j] = children[j].innerHTML;
-            //  myEq += children[j].innerHTML;
-        }
-        console.log(myEqArr);
-
-        try {
-            if (eval(myEqArr.join('')) == eval(myArrayEquation.join(''))) {
-                orgEqArr = Array.from(myArrayEquation);
-                for (let i = 0; i < myEqArr.length; i++) {
-                    if (myEqArr[i] == orgEqArr[i]) {
-                        myEqArr[i] = orgEqArr[i] = 'x';
-                        children[i].style.background = 'green';
-                        isWinCount++;
-                    }
-                    children[i].style.color = 'white';
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+    for (let j = 0; j < children.length - 1; j++) {
+        myEqArr[j] = children[j].innerHTML;
+    }
+    try {
+        if (eval(myEqArr.join('')) == eval(myArrayEquation.join(''))) {
+            orgEqArr = Array.from(myArrayEquation);
+            for (let i = 0; i < myEqArr.length; i++) {
+                if (myEqArr[i] == orgEqArr[i]) {
+                    myEqArr[i] = orgEqArr[i] = 'x';
+                    children[i].style.background = 'green';
+                    isWinCount++;
                 }
-                if (isWinCount == 7) {
-                    // console.log(myEqArr);
-                    //  console.log(orgEqArr)
-                    $("#winTitle").toggle();
-                    statsUpdate("win");
-                    return "win";
-                } else {
-                    for (let i = 0; i < myEqArr.length; i++) {
-                        if (myEqArr[i] != 'x') {
-                            if (orgEqArr.indexOf(myEqArr[i]) != -1) {
-                                orgEqArr[orgEqArr.indexOf(myEqArr[i])] = myEqArr[i] = 'y';
-                                children[i].style.background = 'orange';
-                            } else {
-                                children[i].style.background = 'black';
-                            }
-
+                children[i].style.color = 'white';
+            }
+            if (isWinCount == 7) {
+                $("#winTitle").toggle();
+                statsUpdate("win");
+                return "win";
+            } else {
+                for (let i = 0; i < myEqArr.length; i++) {
+                    if (myEqArr[i] != 'x') {
+                        if (orgEqArr.indexOf(myEqArr[i]) != -1) {
+                            orgEqArr[orgEqArr.indexOf(myEqArr[i])] = myEqArr[i] = 'y';
+                            children[i].style.background = 'orange';
+                        } else {
+                            children[i].style.background = 'black';
                         }
                     }
-                    $("#a_" + guess_count++).css("display", "none");
-                    if (guess_count < 6) {
-                        $("#a_" + guess_count).css("display", "block");
-                        return "next";
-                    } else {
-                        statsUpdate("loss");
-                        $("#lossTitle").toggle();
-                    }
-
                 }
-            } else {
-                for (let j = 0; j < children.length - 1; j++) {
-                    if (children[j].innerHTML != "" && children[j].innerHTML != undefined)
-                        children[j].classList.add('shake');
-
-                    window.setTimeout(function() {
-
-                        children[j].classList.remove('shake');
-                    }, 500);
+                $("#a_" + guess_count++).css("display", "none");
+                if (guess_count < 6) {
+                    $("#a_" + guess_count).css("display", "block");
+                    return "next";
+                } else {
+                    statsUpdate("loss");
+                    $("#lossTitle").toggle();
                 }
-                warningErrorEquation();
-
             }
-        } catch (err) {
-            //show error red
-            console.log("error " + err.message);
+        } else {
+            for (let j = 0; j < children.length - 1; j++) {
+                if (children[j].innerHTML != "" && children[j].innerHTML != undefined)
+                    children[j].classList.add('shake');
+
+                window.setTimeout(function() {
+
+                    children[j].classList.remove('shake');
+                }, 500);
+            }
+            warningErrorEquation(); //show error red
         }
+    } catch (err) {
+        console.log("error " + err.message); //show error red
     }
+}
 
-    function statsUpdate(status) {
-        played++;
-        switch (status) {
-            case "win":
-                win++;
-                winPer = win / played * 100;
-                break;
-            case "loss":
-                winPer = win / played * 100;
-                break;
-            default:
-        }
-        $('#statsIframe').contents().find('#won').text(win);
-        $('#statsIframe').contents().find('#win').text(winPer + '%');
-        $('#statsIframe').contents().find('#played').html(played);
-
+function statsUpdate(status) {
+    played++;
+    switch (status) {
+        case "win":
+            win++;
+            winPer = win / played * 100;
+            break;
+        case "loss":
+            winPer = win / played * 100;
+            break;
+        default:
     }
-
-    function warningErrorEquation() {
-        // get last child of equation
-        let parent = document.getElementsByClassName('row mt-2')[guess_count];
-        let children = parent.children;
-
-        let el = children[children.length - 1].children[0];
-        var original = 'black';
-        el.style.color = 'red';
-        window.setTimeout(function() { el.style.color = original; }, 1500);
-
-    }
-
-    $('#statsIframe').contents().find('button#closeIframe').click(function() {
-        $('.iframe-container').toggle();
-    });
+    $('#statsIframe').contents().find('#won').text(win);
+    $('#statsIframe').contents().find('#win').text(winPer + '%');
+    $('#statsIframe').contents().find('#played').html(played);
 
 }
 
+function warningErrorEquation() {
+    // get last child of equation
+    let parent = document.getElementsByClassName('row mt-2')[guess_count];
+    let children = parent.children;
+
+    let el = children[children.length - 1].children[0];
+    var original = 'black';
+    el.style.color = 'red';
+    window.setTimeout(function() { el.style.color = original; }, 1500);
+
+}
+
+$('#statsIframe').contents().find('button#closeIframe').click(function() {
+    $('.iframe-container').toggle();
+});
 
 function displayIframe() {
     $('.iframe-container').toggle();
 }
 
-
-// window.onload = function() {
-
-//     // If sessionStorage is storing default values (ex. name), exit the function and do not restore data
-//     if (sessionStorage.getItem('guess_count') == "0") {
-//         //return;
-//     }
-
-//     // // If values are not blank, restore them to the fields
-//     // var name = sessionStorage.getItem('name');
-//     // if (name !== null) $('#inputName').val(name);
-
-//     // var email = sessionStorage.getItem('email');
-//     // if (email !== null) $('#inputEmail').val(email);
-
-//     // var subject = sessionStorage.getItem('subject');
-//     // if (subject !== null) $('#inputSubject').val(subject);
-
-//     // var message = sessionStorage.getItem('message');
-//     // if (message !== null) $('#inputMessage').val(message);
-// }
-
 // Before refreshing the page, save the form data to sessionStorage
 // window.onbeforeunload = function() {
-//     sessionStorage.setItem("guess_count", guess_count);
-//     // sessionStorage.setItem("email", $('#inputEmail').val());
-//     // sessionStorage.setItem("subject", $('#inputSubject').val());
+//     window.sessionStorage.setItem("guess_count", guess_count);
+//     console.log("hi");
+//     sessionStorage.setItem("randNum", randNum);
+//     sessionStorage.setItem("myArrayEquation", myArrayEquation);
 //     // sessionStorage.setItem("message", $('#inputMessage').val());
 // }
