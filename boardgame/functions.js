@@ -1,16 +1,16 @@
-function generateEquation(myArrayEquation, dmas_array) {
-    var randomNum;
+function generateEquation(dmas_array) {
+    var randomNum, array = [];
     for (let i = 0; i < 7; i++) {
         if (i % 2 == 0) {
             randomNum = Math.floor(Math.random() * 10);
-            myArrayEquation[i] = randomNum + '';
+            array[i] = randomNum + '';
             if (i != 0) {
-                if (myArrayEquation[i - 1] == '/') {
+                if (array[i - 1] == '/') {
                     try {
 
-                        while (!Number.isInteger(eval(myArrayEquation.join(''))) || randomNum == 0) {
+                        while (!Number.isInteger(eval(array.join(''))) || randomNum == 0) {
                             randomNum = Math.floor(Math.random() * 10);
-                            myArrayEquation[i] = randomNum + '';
+                            array[i] = randomNum + '';
                         }
                     } catch (err) {
                         console.log(err.message);
@@ -20,9 +20,10 @@ function generateEquation(myArrayEquation, dmas_array) {
 
         } else {
             let index_random = Math.floor(Math.random() * 4);
-            myArrayEquation[i] = dmas_array[index_random];
+            array[i] = dmas_array[index_random];
         }
     }
-    console.log("from generate ", eval(myArrayEquation));
-    return eval(myArrayEquation.join(''));
+    console.log("from generate ", (array));
+    sessionStorage.setItem('myArrayEquation', JSON.stringify(array));
+    return array;
 }

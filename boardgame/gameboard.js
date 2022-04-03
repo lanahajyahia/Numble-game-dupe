@@ -1,18 +1,41 @@
 var guess_count = 0;
 var dmas_array = ['+', '-', '*', '/'];
 var myArrayEquation = [];
-var randNum = generateEquation(myArrayEquation, dmas_array);
+var randNum;
 
 var played = 0;
 var win = 0;
 var winPer = 0;
 
 window.onload = function() {
+    if (window.sessionStorage.getItem('myArrayEquation') == null || window.sessionStorage.getItem('myArrayEquation') == []) {
+        myArrayEquation = generateEquation(dmas_array);
+        console.log(Array.isArray(myArrayEquation));
+        let tempArray = Array.from(myArrayEquation);
+        console.log("bef sess" + (Array.isArray(myArrayEquation)));
+        randNum = eval(tempArray.join(''));
+        sessionStorage.setItem('randNum', randNum);
 
-    $("#a_" + guess_count).css("display", "block");
+
+    } else {
+        guess_count = window.sessionStorage.getItem('guess_count');
+        myArrayEquation = JSON.parse(window.sessionStorage.getItem('myArrayEquation'));
+        console.log("after sess" + (Array.isArray(myArrayEquation)));
+        randNum = window.sessionStorage.getItem('randNum');
+
+
+        $('#statsIframe').contents().find('#won').text(window.sessionStorage.getItem('win'));
+        $('#statsIframe').contents().find('#win').text(window.sessionStorage.getItem('winPer') + '%');
+        $('#statsIframe').contents().find('#played').html(window.sessionStorage.getItem('played'));
+
+    }
+
+
     createBoxes(randNum);
     createCalculator();
 
+    console.log("start my stuff ", guess_count);
+    $("#a_" + guess_count).css("display", "block");
     $("body").mousedown(function() {
         if ($('.iframe-container').css('display') == 'block') {
             $('.iframe-container').css('display', 'none');
@@ -70,11 +93,11 @@ window.onload = function() {
                 break;
             case 8:
             case 46:
-                console.log('hi');
+                console.log(event.keyCode)
                 remove();
-                event.preventDefault();
                 break;
             default:
+                console.log(event.keyCode)
 
                 break;
 
@@ -83,53 +106,58 @@ window.onload = function() {
 
     });
     var b1 = document.getElementById("b_1");
-    b1.onclick = function() { addNumber(b1.innerHTML) };
+    b1.onclick = function() { addNumber(1) };
 
     var b2 = document.getElementById("b_2");
-    b2.onclick = function() { addNumber(b2.innerHTML) };
+    b2.onclick = function() { addNumber(2) };
 
     var b3 = document.getElementById("b_3");
-    b3.onclick = function() { addNumber(b3.innerHTML) };
+    b3.onclick = function() { addNumber(3) };
 
     var b4 = document.getElementById("b_4");;
-    b4.onclick = function() { addNumber(b4.innerHTML) };
+    b4.onclick = function() { addNumber(4) };
 
     var b5 = document.getElementById("b_5");
-    b5.onclick = function() { addNumber(b5.innerHTML) };
+    b5.onclick = function() { addNumber(5) };
 
     var b6 = document.getElementById("b_6");
-    b6.onclick = function() { addNumber(b6.innerHTML) };
+    b6.onclick = function() { addNumber(6) };
 
     var b7 = document.getElementById("b_7");
-    b7.onclick = function() { addNumber(b7.innerHTML) };
+    b7.onclick = function() { addNumber(7) };
 
     var b8 = document.getElementById("b_8");
-    b8.onclick = function() { addNumber(b8.innerHTML) };
+    b8.onclick = function() { addNumber(8) };
 
     var b9 = document.getElementById("b_9");
-    b9.onclick = function() { addNumber(b9.innerHTML) };
+    b9.onclick = function() { addNumber(9) };
 
     var b0 = document.getElementById("b_0");
-    b0.onclick = function() { addNumber(b0.innerHTML) };
+    b0.onclick = function() { addNumber(0) };
 
     var b_plus = document.getElementById("b_plus");
-    b_plus.onclick = function() { addNumber(b_plus.innerHTML) };
+    b_plus.onclick = function() { addNumber('+') };
 
     var b_minus = document.getElementById("b_minus");
-    b_minus.onclick = function() { addNumber(b_minus.innerHTML) };
+    b_minus.onclick = function() { addNumber('-') };
 
     var b_multiple = document.getElementById("b_multiple");
-    b_multiple.onclick = function() { addNumber(b_multiple.innerHTML) };
+    b_multiple.onclick = function() { addNumber('*') };
 
     var b_divide = document.getElementById("b_div");
-    b_divide.onclick = function() { addNumber(b_divide.innerHTML) };
+    b_divide.onclick = function() { addNumber('/') }
 
     var b_delete = document.getElementById("b_delete");
     b_delete.onclick = function() { remove() };
 
     var b_enter = document.getElementById("b_enter");
     b_enter.onclick = function() { checkResult() };
+
+    $('#statsIframe').contents().find('button#closeIframe').click(function() {
+        $('.iframe-container').toggle();
+    });
 }
+
 
 function createBoxes(randNum) {
     // var randNum = generateEquation(myStringEquation, myArrayEquation, dmas_array);
@@ -167,7 +195,7 @@ function createBoxes(randNum) {
 
 function createCalculator() {
     var count = 1;
-    var calcStrArr = ['plus', 'minus', 'div', 'multiple', 'delete'];
+    var calcStrArr = ['plus', 'minus', 'div', 'multiple'];
     var calcArr = ['+', '-', '/', '*', ''];
     var strBtn = '';
     for (let i = 0; i < 4; i++) {
@@ -176,11 +204,17 @@ function createCalculator() {
 
         document.getElementById("keyboard").children[0].appendChild(containerDiv);
         if (i == 3) {
-            const boxBtn = document.createElement("button");
-            boxBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
-            boxBtn.setAttribute("id", "b_enter");
-            boxBtn.innerText = 'Enter';
-            document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
+            const enterBtn = document.createElement("button");
+            enterBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
+            enterBtn.setAttribute("id", "b_enter");
+            enterBtn.innerText = 'Enter';
+            document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(enterBtn);
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.setAttribute("class", "box2 mt-2 ml-2 btn btn-secondary");
+            deleteBtn.setAttribute("id", "b_delete");
+            deleteBtn.innerText = 'Delete';
+            document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(deleteBtn);
         } else {
             for (let j = 0; j < 5; j++) {
                 const boxBtn = document.createElement("button");
@@ -190,15 +224,23 @@ function createCalculator() {
                     count = 0;
                     strBtn = 0;
                     boxBtn.setAttribute("id", "b_" + strBtn);
+                    boxBtn.innerText = strBtn;
 
                 } else if (count == 0) {
+                    if (j == 4) {
+                        break;
+                    }
                     boxBtn.setAttribute("id", "b_" + calcStrArr[j]);
-                    strBtn = calcArr[j];
+                    boxBtn.innerText = calcArr[j];
+
+
 
                 } else {
                     boxBtn.setAttribute("id", "b_" + count++);
+                    boxBtn.innerText = strBtn;
+
                 }
-                boxBtn.innerText = strBtn;
+
                 document.getElementsByClassName(containerDiv.getAttribute('class'))[i].appendChild(boxBtn);
             }
         }
@@ -251,10 +293,14 @@ function checkResult() {
     for (let j = 0; j < children.length - 1; j++) {
         myEqArr[j] = children[j].innerHTML;
     }
+
+    console.log('my arr ' + myEqArr);
     try {
-        if (eval(myEqArr.join('')) == eval(myArrayEquation.join(''))) {
-            orgEqArr = Array.from(myArrayEquation);
+        if (eval(myEqArr.join('')) == randNum) {
+            myArrayEquation.join('').split('');
+            orgEqArr = [...myArrayEquation];
             for (let i = 0; i < myEqArr.length; i++) {
+                console.log(orgEqArr[i]);
                 if (myEqArr[i] == orgEqArr[i]) {
                     myEqArr[i] = orgEqArr[i] = 'x';
                     children[i].style.background = 'green';
@@ -262,6 +308,9 @@ function checkResult() {
                 }
                 children[i].style.color = 'white';
             }
+            console.log("copied array: " + orgEqArr);
+            console.log("real array: " + myArrayEquation);
+            console.log("my array: " + myEqArr);
             if (isWinCount == 7) {
                 $("#winTitle").toggle();
                 statsUpdate("win");
@@ -277,9 +326,13 @@ function checkResult() {
                         }
                     }
                 }
+                console.log("copied array: " + orgEqArr);
+                console.log("real array: " + myArrayEquation);
+                console.log("my array: " + myEqArr);
                 $("#a_" + guess_count++).css("display", "none");
                 if (guess_count < 6) {
                     $("#a_" + guess_count).css("display", "block");
+                    console.log("hi");
                     return "next";
                 } else {
                     statsUpdate("loss");
@@ -287,19 +340,27 @@ function checkResult() {
                 }
             }
         } else {
-            for (let j = 0; j < children.length - 1; j++) {
-                if (children[j].innerHTML != "" && children[j].innerHTML != undefined)
-                    children[j].classList.add('shake');
 
-                window.setTimeout(function() {
-
-                    children[j].classList.remove('shake');
-                }, 500);
-            }
             warningErrorEquation(); //show error red
+            shakeBoxes(children);
         }
     } catch (err) {
-        console.log("error " + err.message); //show error red
+        warningErrorEquation(); //show error red
+        shakeBoxes(children);
+
+
+    }
+}
+
+function shakeBoxes(children) {
+    for (let j = 0; j < children.length - 1; j++) {
+        if (children[j].innerHTML != "" && children[j].innerHTML != undefined)
+            children[j].classList.add('shake');
+
+        window.setTimeout(function() {
+
+            children[j].classList.remove('shake');
+        }, 500);
     }
 }
 
@@ -319,6 +380,13 @@ function statsUpdate(status) {
     $('#statsIframe').contents().find('#win').text(winPer + '%');
     $('#statsIframe').contents().find('#played').html(played);
 
+    // window.sessionStorage.setItem('win', win);
+    // window.sessionStorage.setItem('winPer', winPer);
+    // window.sessionStorage.setItem('loss', loss);
+
+
+    window.setTimeout(function() { $('#statsBtn').click(); }, 2000);
+
 }
 
 function warningErrorEquation() {
@@ -333,9 +401,7 @@ function warningErrorEquation() {
 
 }
 
-$('#statsIframe').contents().find('button#closeIframe').click(function() {
-    $('.iframe-container').toggle();
-});
+
 
 function displayIframe() {
     $('.iframe-container').toggle();
@@ -349,3 +415,12 @@ function displayIframe() {
 //     sessionStorage.setItem("myArrayEquation", myArrayEquation);
 //     // sessionStorage.setItem("message", $('#inputMessage').val());
 // }
+
+window.onbeforeunload = function() {
+    console.log("hi");
+    if (guess_count >= 0)
+        window.sessionStorage.setItem("guess_count", guess_count);
+    window.sessionStorage.setItem("win", win);
+    window.sessionStorage.setItem("played", played);
+    window.sessionStorage.setItem("winPer", winPer);
+}
