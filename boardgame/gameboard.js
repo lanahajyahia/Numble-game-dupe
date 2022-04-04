@@ -2,6 +2,9 @@ var guess_count = 0;
 var dmas_array = ['+', '-', '*', '/'];
 var myArrayEquation = [];
 var randNum;
+var game_status = ""; // if win new game if next continue
+
+var current_result_arr = current_result_arr || [];
 
 var played = 0;
 var win = 0;
@@ -15,26 +18,25 @@ window.onload = function() {
         console.log("bef sess" + (Array.isArray(myArrayEquation)));
         randNum = eval(tempArray.join(''));
         sessionStorage.setItem('randNum', randNum);
-
-
     } else {
+
         guess_count = window.sessionStorage.getItem('guess_count');
         myArrayEquation = JSON.parse(window.sessionStorage.getItem('myArrayEquation'));
-        console.log("after sess" + (Array.isArray(myArrayEquation)));
+        console.log("after sess" + (myArrayEquation));
         randNum = window.sessionStorage.getItem('randNum');
 
+        console.log("randum num " + randNum);
 
+        game_status = window.sessionStorage.getItem('game_status');
         $('#statsIframe').contents().find('#won').text(window.sessionStorage.getItem('win'));
         $('#statsIframe').contents().find('#win').text(window.sessionStorage.getItem('winPer') + '%');
         $('#statsIframe').contents().find('#played').html(window.sessionStorage.getItem('played'));
-
     }
-
 
     createBoxes(randNum);
     createCalculator();
 
-    console.log("start my stuff ", guess_count);
+    console.log("guess count ", guess_count);
     $("#a_" + guess_count).css("display", "block");
     $("body").mousedown(function() {
         if ($('.iframe-container').css('display') == 'block') {
@@ -42,6 +44,17 @@ window.onload = function() {
         }
 
     });
+    $('#statsIframe').contents().find('button#closeIframe').click(function() {
+        $('.iframe-container').toggle();
+    });
+
+    current_result_arr = JSON.parse(window.sessionStorage.getItem('current_result_arr'));
+    if (current_result_arr != null && current_result_arr != undefined)
+        if (current_result_arr.length > 0) {
+            fillMatrix();
+        }
+
+
     $("body").keypress(function() {
         // event.preventDefault();
 
@@ -98,12 +111,8 @@ window.onload = function() {
                 break;
             default:
                 console.log(event.keyCode)
-
                 break;
-
-
         }
-
     });
     var b1 = document.getElementById("b_1");
     b1.onclick = function() { addNumber(1) };
@@ -153,11 +162,24 @@ window.onload = function() {
     var b_enter = document.getElementById("b_enter");
     b_enter.onclick = function() { checkResult() };
 
-    $('#statsIframe').contents().find('button#closeIframe').click(function() {
-        $('.iframe-container').toggle();
-    });
+
 }
 
+function fillMatrix() {
+
+    for (let i = 0; i < current_result_arr.length; i++) {
+        let parent = document.getElementsByClassName('row mt-2')[i];
+        let children = parent.children;
+        for (let j = 0; j < children.length - 1; j++) {
+            let array = current_result_arr[i];
+            let index = array[j].index;
+            children[index].innerHTML = array[j].number;
+            children[index].style.background = array[j].color;
+            children[index].style.color = 'white';
+        }
+    }
+
+}
 
 function createBoxes(randNum) {
     // var randNum = generateEquation(myStringEquation, myArrayEquation, dmas_array);
@@ -247,7 +269,6 @@ function createCalculator() {
     }
 }
 
-
 function addNumber(boxElm) {
     let parent = document.getElementsByClassName('row mt-2')[guess_count];
     let children = parent.children;
@@ -288,6 +309,9 @@ function checkResult() {
         orgEqArr = [];
     let isWinCount = 0;
 
+    let sessionArr = [];
+    current_result_arr = [];
+
     let parent = document.getElementsByClassName('row mt-2')[guess_count];
     let children = parent.children;
     for (let j = 0; j < children.length - 1; j++) {
@@ -305,6 +329,7 @@ function checkResult() {
                     myEqArr[i] = orgEqArr[i] = 'x';
                     children[i].style.background = 'green';
                     isWinCount++;
+                    sessionArr.push({ index: i, number: children[i].innerHTML, color: children[i].style.background });
                 }
                 children[i].style.color = 'white';
             }
@@ -314,6 +339,7 @@ function checkResult() {
             if (isWinCount == 7) {
                 $("#winTitle").toggle();
                 statsUpdate("win");
+                game_status = "win";
                 return "win";
             } else {
                 for (let i = 0; i < myEqArr.length; i++) {
@@ -324,31 +350,36 @@ function checkResult() {
                         } else {
                             children[i].style.background = 'black';
                         }
+                        sessionArr.push({ index: i, number: children[i].innerHTML, color: children[i].style.background });
                     }
                 }
                 console.log("copied array: " + orgEqArr);
                 console.log("real array: " + myArrayEquation);
                 console.log("my array: " + myEqArr);
                 $("#a_" + guess_count++).css("display", "none");
+                console.log("sessionArr ", sessionArr);
                 if (guess_count < 6) {
+                    current_result_arr.push(sessionArr);
+                    console.log("current ", current_result_arr);
                     $("#a_" + guess_count).css("display", "block");
-                    console.log("hi");
+                    game_status = "next";
                     return "next";
                 } else {
+                    console.log("loss");
+                    game_status = "loss";
                     statsUpdate("loss");
                     $("#lossTitle").toggle();
                 }
             }
-        } else {
 
+        } else {
             warningErrorEquation(); //show error red
             shakeBoxes(children);
         }
     } catch (err) {
+        console.log(err);
         warningErrorEquation(); //show error red
         shakeBoxes(children);
-
-
     }
 }
 
@@ -380,11 +411,6 @@ function statsUpdate(status) {
     $('#statsIframe').contents().find('#win').text(winPer + '%');
     $('#statsIframe').contents().find('#played').html(played);
 
-    // window.sessionStorage.setItem('win', win);
-    // window.sessionStorage.setItem('winPer', winPer);
-    // window.sessionStorage.setItem('loss', loss);
-
-
     window.setTimeout(function() { $('#statsBtn').click(); }, 2000);
 
 }
@@ -401,20 +427,9 @@ function warningErrorEquation() {
 
 }
 
-
-
 function displayIframe() {
     $('.iframe-container').toggle();
 }
-
-// Before refreshing the page, save the form data to sessionStorage
-// window.onbeforeunload = function() {
-//     window.sessionStorage.setItem("guess_count", guess_count);
-//     console.log("hi");
-//     sessionStorage.setItem("randNum", randNum);
-//     sessionStorage.setItem("myArrayEquation", myArrayEquation);
-//     // sessionStorage.setItem("message", $('#inputMessage').val());
-// }
 
 window.onbeforeunload = function() {
     console.log("hi");
@@ -423,4 +438,6 @@ window.onbeforeunload = function() {
     window.sessionStorage.setItem("win", win);
     window.sessionStorage.setItem("played", played);
     window.sessionStorage.setItem("winPer", winPer);
+    if (current_result_arr.length != 0)
+        window.sessionStorage.setItem("current_result_arr", JSON.stringify(current_result_arr));
 }
