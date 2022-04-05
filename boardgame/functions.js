@@ -7,7 +7,6 @@ function generateEquation(dmas_array) {
             if (i != 0) {
                 if (array[i - 1] == '/') {
                     try {
-
                         while (!Number.isInteger(eval(array.join(''))) || randomNum == 0) {
                             randomNum = Math.floor(Math.random() * 10);
                             array[i] = randomNum + '';
@@ -23,7 +22,6 @@ function generateEquation(dmas_array) {
             array[i] = dmas_array[index_random];
         }
     }
-    console.log("from generate ", (array));
     sessionStorage.setItem('myArrayEquation', JSON.stringify(array));
     return array;
 }

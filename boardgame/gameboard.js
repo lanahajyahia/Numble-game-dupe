@@ -4,39 +4,40 @@ var myArrayEquation = [];
 var randNum;
 var game_status = ""; // if win new game if next continue
 
-var current_result_arr = current_result_arr || [];
+var current_result_arr = [];
 
 var played = 0;
 var win = 0;
 var winPer = 0;
 
 window.onload = function() {
-    if (window.sessionStorage.getItem('myArrayEquation') == null || window.sessionStorage.getItem('myArrayEquation') == []) {
+    game_status = window.sessionStorage.getItem('game_status');
+    if (game_status == null || game_status == "win" || game_status == "loss") {
+        game_status = 'next';
         myArrayEquation = generateEquation(dmas_array);
-        console.log(Array.isArray(myArrayEquation));
+        console.log("My equation: " + (myArrayEquation));
         let tempArray = Array.from(myArrayEquation);
-        console.log("bef sess" + (Array.isArray(myArrayEquation)));
         randNum = eval(tempArray.join(''));
         sessionStorage.setItem('randNum', randNum);
     } else {
-
         guess_count = window.sessionStorage.getItem('guess_count');
         myArrayEquation = JSON.parse(window.sessionStorage.getItem('myArrayEquation'));
-        console.log("after sess" + (myArrayEquation));
+        console.log("My equation: " + (myArrayEquation));
         randNum = window.sessionStorage.getItem('randNum');
-
-        console.log("randum num " + randNum);
-
-        game_status = window.sessionStorage.getItem('game_status');
-        $('#statsIframe').contents().find('#won').text(window.sessionStorage.getItem('win'));
-        $('#statsIframe').contents().find('#win').text(window.sessionStorage.getItem('winPer') + '%');
-        $('#statsIframe').contents().find('#played').html(window.sessionStorage.getItem('played'));
     }
+    win = window.sessionStorage.getItem('win');
+    played = window.sessionStorage.getItem('played');
+    if (win != null && played != null) {
+        $('#statsIframe').contents().find('#won').text(win);
+        $('#statsIframe').contents().find('#played').html(window.sessionStorage.getItem('played'));
+        let num = win / played * 100;
+        $('#statsIframe').contents().find('#win').text(roundToTwo(num) + '%');
+    }
+
 
     createBoxes(randNum);
     createCalculator();
 
-    console.log("guess count ", guess_count);
     $("#a_" + guess_count).css("display", "block");
     $("body").mousedown(function() {
         if ($('.iframe-container').css('display') == 'block') {
@@ -56,8 +57,6 @@ window.onload = function() {
 
 
     $("body").keypress(function() {
-        // event.preventDefault();
-
         switch (event.keyCode) {
             case 57:
                 addNumber(event.key);
@@ -106,11 +105,9 @@ window.onload = function() {
                 break;
             case 8:
             case 46:
-                console.log(event.keyCode)
                 remove();
                 break;
             default:
-                console.log(event.keyCode)
                 break;
         }
     });
@@ -165,8 +162,11 @@ window.onload = function() {
 
 }
 
-function fillMatrix() {
+function roundToTwo(num) {
+    return (Math.round(num * 100) / 100).toFixed(2);
+}
 
+function fillMatrix() {
     for (let i = 0; i < current_result_arr.length; i++) {
         let parent = document.getElementsByClassName('row mt-2')[i];
         let children = parent.children;
@@ -178,11 +178,9 @@ function fillMatrix() {
             children[index].style.color = 'white';
         }
     }
-
 }
 
 function createBoxes(randNum) {
-    // var randNum = generateEquation(myStringEquation, myArrayEquation, dmas_array);
     for (let i = 0; i < 6; i++) {
         const rowDiv = document.createElement("div");
         rowDiv.setAttribute("class", "row mt-2");
@@ -310,21 +308,19 @@ function checkResult() {
     let isWinCount = 0;
 
     let sessionArr = [];
-    current_result_arr = [];
-
+    if (current_result_arr == null)
+        current_result_arr = [];
     let parent = document.getElementsByClassName('row mt-2')[guess_count];
     let children = parent.children;
     for (let j = 0; j < children.length - 1; j++) {
         myEqArr[j] = children[j].innerHTML;
     }
 
-    console.log('my arr ' + myEqArr);
     try {
         if (eval(myEqArr.join('')) == randNum) {
             myArrayEquation.join('').split('');
             orgEqArr = [...myArrayEquation];
             for (let i = 0; i < myEqArr.length; i++) {
-                console.log(orgEqArr[i]);
                 if (myEqArr[i] == orgEqArr[i]) {
                     myEqArr[i] = orgEqArr[i] = 'x';
                     children[i].style.background = 'green';
@@ -333,9 +329,6 @@ function checkResult() {
                 }
                 children[i].style.color = 'white';
             }
-            console.log("copied array: " + orgEqArr);
-            console.log("real array: " + myArrayEquation);
-            console.log("my array: " + myEqArr);
             if (isWinCount == 7) {
                 $("#winTitle").toggle();
                 statsUpdate("win");
@@ -353,19 +346,13 @@ function checkResult() {
                         sessionArr.push({ index: i, number: children[i].innerHTML, color: children[i].style.background });
                     }
                 }
-                console.log("copied array: " + orgEqArr);
-                console.log("real array: " + myArrayEquation);
-                console.log("my array: " + myEqArr);
                 $("#a_" + guess_count++).css("display", "none");
-                console.log("sessionArr ", sessionArr);
                 if (guess_count < 6) {
                     current_result_arr.push(sessionArr);
-                    console.log("current ", current_result_arr);
                     $("#a_" + guess_count).css("display", "block");
                     game_status = "next";
                     return "next";
                 } else {
-                    console.log("loss");
                     game_status = "loss";
                     statsUpdate("loss");
                     $("#lossTitle").toggle();
@@ -396,23 +383,28 @@ function shakeBoxes(children) {
 }
 
 function statsUpdate(status) {
+    win = window.sessionStorage.getItem('win');
+    if (win == NaN)
+        win = 0;
+
+    played = window.sessionStorage.getItem('played');
+    if (played == NaN)
+        played = 0;
+
     played++;
-    switch (status) {
-        case "win":
-            win++;
-            winPer = win / played * 100;
-            break;
-        case "loss":
-            winPer = win / played * 100;
-            break;
-        default:
+    window.sessionStorage.setItem("played", played);
+    if (status == "win") {
+        win++;
     }
+    let num = win / played * 100;
+    winPer = roundToTwo(num);
+    window.sessionStorage.setItem("win", win);
+
     $('#statsIframe').contents().find('#won').text(win);
     $('#statsIframe').contents().find('#win').text(winPer + '%');
     $('#statsIframe').contents().find('#played').html(played);
 
     window.setTimeout(function() { $('#statsBtn').click(); }, 2000);
-
 }
 
 function warningErrorEquation() {
@@ -432,12 +424,19 @@ function displayIframe() {
 }
 
 window.onbeforeunload = function() {
-    console.log("hi");
-    if (guess_count >= 0)
-        window.sessionStorage.setItem("guess_count", guess_count);
-    window.sessionStorage.setItem("win", win);
-    window.sessionStorage.setItem("played", played);
-    window.sessionStorage.setItem("winPer", winPer);
-    if (current_result_arr.length != 0)
-        window.sessionStorage.setItem("current_result_arr", JSON.stringify(current_result_arr));
+    try {
+        if (guess_count >= 0)
+            window.sessionStorage.setItem("guess_count", guess_count);
+
+        if (game_status != '')
+            window.sessionStorage.setItem("game_status", game_status);
+
+        if (game_status != 'next') {
+            window.sessionStorage.setItem("current_result_arr", null);
+        } else if (current_result_arr != null)
+            window.sessionStorage.setItem("current_result_arr", JSON.stringify(current_result_arr));
+    } catch (err) {
+        console.log(err);
+    }
+
 }

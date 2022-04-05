@@ -154,7 +154,6 @@ body {
     width: auto;
     height: 300px;
     margin: 2em auto;
-    /* background-color: #777; */
     display: block;
     z-index: 99999;
     background-clip: padding-box;
